@@ -37,6 +37,7 @@ module Whedon
   class Paper
     include GitHub
 
+    attr_accessor :tmpdir
     attr_accessor :review_issue_id
     attr_accessor :review_repository
     attr_accessor :review_issue_body
@@ -77,7 +78,7 @@ module Whedon
     # Initialized with JOSS paper including YAML header
     # e.g. http://joss.theoj.org/about#paper_structure
     # Optionally return early if no paper_path is set
-    def initialize(review_issue_id, paper_path=nil)
+    def initialize(review_issue_id, paper_path=nil, tmpdir='tmp')
       @review_issue_id = review_issue_id
       @review_repository = ENV['REVIEW_REPOSITORY']
       return if paper_path.nil?
@@ -145,7 +146,7 @@ module Whedon
     end
 
     def detect_languages
-      repo = Rugged::Repository.new("tmp/#{review_issue_id}")
+      repo = Rugged::Repository.new(tmpdir+"/#{review_issue_id}")
       project = Linguist::Repository.new(repo, repo.head.target_id)
 
       # Take top five languages from Linguist
