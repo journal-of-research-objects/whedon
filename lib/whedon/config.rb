@@ -20,15 +20,26 @@ module WhedonConfig
     app_env == 'test'
   end
 
+  # Use github or not - currently just disables for BioHackrXiv
+  def use_github?
+    !journal_biohackrxiv?
+  end
+
   def journal
     check 'WHEDON_JOURNAL'
+  end
+
+  def journal_biohackrxiv?
+    journal == "BioHackrXiv"
   end
 
   def output_destination
     dest = ENV['WHEDON_OUTPUT_DESTINATION']
     if dest == nil or dest == 'cloudinary'
+      logger.debug("Output set to cloudinary")
       return :cloudinary
     else
+      logger.debug("Output set to directory "+dest)
       return dest if File.directory?(dest)
     end
     raise "Environment WHEDON_OUTPUT_DESTINATION target directory #{dest} does not exist!"

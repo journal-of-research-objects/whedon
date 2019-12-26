@@ -1,5 +1,6 @@
 require 'base64'
 require 'linguist'
+require 'logging'
 require 'octokit'
 require 'redcarpet'
 require 'redcarpet/render_strip'
@@ -35,7 +36,9 @@ module Whedon
   VERSION_REGEX = /(?<=\*\*Version:\*\*\s)(\S+)/
   ARCHIVE_REGEX = /(?<=\*\*Archive:\*\*.<a\shref=)"(.*?)"/
 
+
   class Paper
+    include WhedonConfig
     include GitHub
 
     attr_accessor :tmpdir
@@ -48,6 +51,8 @@ module Whedon
     attr_accessor :current_volume
     attr_accessor :current_issue
     attr_accessor :current_year
+
+    attr_accessor :logger
 
     EXPECTED_MARKDOWN_FIELDS = %w{
       title
@@ -80,6 +85,9 @@ module Whedon
     # e.g. http://joss.theoj.org/about#paper_structure
     # Optionally return early if no paper_path is set
     def initialize(review_issue_id, paper_path=nil, tmpdir='tmp')
+      @logger = Logger.new(STDERR)
+      @logger.level = Logger::DEBUG if development?
+
       @review_issue_id = review_issue_id
       @review_repository = ENV['REVIEW_REPOSITORY']
       return if paper_path.nil?
@@ -147,11 +155,14 @@ module Whedon
     end
 
     def detect_languages
-      repo = Rugged::Repository.new(tmpdir+"/#{review_issue_id}")
-      project = Linguist::Repository.new(repo, repo.head.target_id)
+      if use_github?
+        repo = Rugged::Repository.new(tmpdir+"/#{review_issue_id}")
+        project = Linguist::Repository.new(repo, repo.head.target_id)
 
-      # Take top five languages from Linguist
-      project.languages.keys.take(5)
+        # Take top five languages from Linguist
+        return project.languages.keys.take(5)
+      end
+      @logger.debug("Ignore detect_languages without github access")
     end
 
     # Create the payload that we're going to use to post back to JOSS/JOSE
