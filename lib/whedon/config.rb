@@ -20,13 +20,15 @@ module WhedonConfig
     app_env == 'test'
   end
 
+  alias testing? test?
+
   # Use github or not - currently just disables for BioHackrXiv
   def use_github?
     !journal_biohackrxiv?
   end
 
   def journal
-    check 'WHEDON_JOURNAL'
+    ENV['WHEDON_JOURNAL']
   end
 
   def journal_biohackrxiv?
