@@ -150,7 +150,7 @@
 \patchcmd{\@maketitle}{center}{flushleft}{}{}
 \patchcmd{\@maketitle}{center}{flushleft}{}{}
 % patch \maketitle so that the font size for the title is normal
-\patchcmd{\@maketitle}{\LARGE}{\LARGE\sffamily}{}{}
+\patchcmd{\@maketitle}{\HUGE}{\HUGE\sffamily}{}{}
 % patch the patch by authblk so that the author block is flush left
 \def\maketitle{{%
   \renewenvironment{tabular}[2][]
@@ -408,9 +408,8 @@ $endif$
   {\bfseries Software}
   \begin{itemize}
     \setlength\itemsep{0em}
-    \item \href{$review_issue_url$}{\color{linky}{Review}} \ExternalLink
     \item \href{$repository$}{\color{linky}{Repository}} \ExternalLink
-    \item \href{$archive_doi$}{\color{linky}{Archive}} \ExternalLink
+    \item \href{$branch$}{\color{linky}{Branch}} \ExternalLink
   \end{itemize}
 
   \vspace{2mm}
