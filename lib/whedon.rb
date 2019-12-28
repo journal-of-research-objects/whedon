@@ -1,13 +1,9 @@
 require 'base64'
-require 'linguist'
-require 'logging'
 require 'octokit'
-require 'redcarpet'
-require 'redcarpet/render_strip'
 require 'time'
 
-require 'dotenv'
-Dotenv.load
+# require 'dotenv'
+# Dotenv.load
 
 require_relative 'whedon/auditor'
 require_relative 'whedon/author'
@@ -156,6 +152,7 @@ module Whedon
 
     def detect_languages
       if use_github?
+        require 'linguist'
         repo = Rugged::Repository.new(tmpdir+"/#{review_issue_id}")
         project = Linguist::Repository.new(repo, repo.head.target_id)
 
@@ -188,6 +185,8 @@ module Whedon
     end
 
     def plain_title
+      require 'redcarpet'
+      require 'redcarpet/render_strip'
       renderer = Redcarpet::Markdown.new(Redcarpet::Render::StripDown)
       return renderer.render(self.title).strip
     end
