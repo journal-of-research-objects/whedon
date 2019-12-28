@@ -35,6 +35,8 @@ module WhedonConfig
     journal == "BioHackrXiv"
   end
 
+  alias biohackrxiv? journal_biohackrxiv?
+
   def output_destination
     dest = ENV['WHEDON_OUTPUT_DESTINATION']
     if dest == nil or dest == 'cloudinary'
